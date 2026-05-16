@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>מערכת הערכת אתרי אינטרנט | Innovesta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Heebo:wght@300;400;500;700;900&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0a0c10;--surface:#111418;--surface2:#181c22;
+  --border:#232830;--border2:#2e3540;
+  --text:#e8edf3;--text2:#8a95a3;--text3:#4a5563;
+  --accent:#00d4aa;--accent2:#00a882;
+  --blue:#3b82f6;--amber:#f59e0b;--red:#ef4444;--green:#10b981;
+  --mono:'IBM Plex Mono',monospace;--sans:'Heebo',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:linear-gradient(rgba(0,212,170,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,170,0.03) 1px,transparent 1px);
+  background-size:40px 40px;pointer-events:none;z-index:0;
+}
+header{
+  position:sticky;top:0;z-index:100;
+  background:rgba(10,12,16,0.92);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  padding:0 2rem;height:60px;display:flex;align-items:center;justify-content:space-between;
+}
+.logo{font-family:var(--mono);font-size:13px;color:var(--accent);letter-spacing:.08em;display:flex;align-items:center;gap:10px;}
+.logo-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(.7);}}
+.header-tag{font-family:var(--mono);font-size:11px;color:var(--text3);letter-spacing:.05em;}
+main{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:3rem 1.5rem 5rem;}
+.hero{text-align:center;margin-bottom:3rem;animation:fadeUp .6s ease both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+.hero-kicker{
+  font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:.15em;text-transform:uppercase;
+  margin-bottom:1rem;display:flex;align-items:center;justify-content:center;gap:10px;
+}
+.hero-kicker::before,.hero-kicker::after{content:'';width:32px;height:1px;background:var(--accent);opacity:.4;}
+h1{
+  font-size:clamp(2rem,5vw,3rem);font-weight:900;line-height:1.1;margin-bottom:1rem;
+  background:linear-gradient(135deg,#fff 40%,var(--accent) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-sub{font-size:15px;color:var(--text2);max-width:540px;margin:0 auto 2rem;line-height:1.7;}
+.url-row{display:flex;gap:8px;max-width:600px;margin:0 auto 3rem;}
+.url-row input{
+  flex:1;background:var(--surface);border:1px solid var(--border2);
+  border-radius:8px;padding:10px 14px;font-size:14px;color:var(--text);
+  font-family:var(--mono);outline:none;transition:border-color .2s;
+}
+.url-row input:focus{border-color:var(--accent);}
+.url-row input::placeholder{color:var(--text3);}
+.btn-secondary{
+  padding:10px 16px;background:var(--surface2);border:1px solid var(--border2);
+  border-radius:8px;color:var(--text2);font-size:13px;cursor:pointer;
+  white-space:nowrap;transition:all .15s;font-family:var(--sans);
+}
+.btn-secondary:hover{border-color:var(--accent);color:var(--accent);}
+.section-label{
+  font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--text3);margin-bottom:1rem;display:flex;align-items:center;gap:10px;
+}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border);}
+.criteria-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1.5rem;}
+@media(max-width:600px){.criteria-grid{grid-template-columns:1fr;}}
+.crit-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  padding:1.2rem;transition:border-color .2s;
+}
+.crit-card:hover{border-color:var(--border2);}
+.crit-header{display:flex;align-items:center;gap:10px;margin-bottom:1rem;}
+.crit-badge{
+  width:30px;height:30px;border-radius:6px;display:flex;align-items:center;
+  justify-content:center;font-family:var(--mono);font-size:13px;font-weight:500;flex-shrink:0;
+}
+.badge-a{background:rgba(59,130,246,.15);color:var(--blue);}
+.badge-c{background:rgba(16,185,129,.15);color:var(--green);}
+.badge-p{background:rgba(245,158,11,.15);color:var(--amber);}
+.crit-name{font-size:13px;font-weight:700;letter-spacing:.02em;}
+.crit-sub{font-size:11px;color:var(--text3);margin-top:1px;}
+.param-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.param-row:last-child{margin-bottom:0;}
+.param-label{font-size:12px;color:var(--text2);flex:1;min-width:0;line-height:1.4;}
+.toggle-group{display:flex;gap:3px;flex-shrink:0;}
+.tgl{
+  width:32px;height:26px;border:1px solid var(--border2);border-radius:5px;
+  font-family:var(--mono);font-size:11px;cursor:pointer;
+  background:transparent;color:var(--text3);transition:all .15s;
+}
+.tgl:hover{border-color:var(--text2);color:var(--text2);}
+.tgl.pos{background:rgba(16,185,129,.15);border-color:var(--green);color:var(--green);}
+.tgl.zero{background:rgba(139,148,163,.1);border-color:#555;color:var(--text2);}
+.tgl.neg{background:rgba(239,68,68,.12);border-color:var(--red);color:var(--red);}
+.analyst-block{
+  background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  padding:1.2rem;margin-bottom:1.5rem;
+}
+.analyst-top{display:flex;align-items:center;gap:10px;margin-bottom:1rem;flex-wrap:wrap;}
+.analyst-chip{
+  font-family:var(--mono);font-size:10px;padding:3px 10px;border-radius:4px;
+  background:rgba(0,212,170,.1);color:var(--accent);border:1px solid rgba(0,212,170,.2);
+  letter-spacing:.05em;
+}
+.analyst-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+@media(max-width:480px){.analyst-grid{grid-template-columns:1fr 1fr;}}
+.analyst-item label{display:block;font-size:11px;color:var(--text3);margin-bottom:4px;font-family:var(--mono);}
+.analyst-item select{
+  width:100%;background:var(--surface2);border:1px solid var(--border2);
+  border-radius:6px;padding:6px 8px;font-size:12px;color:var(--text2);
+  font-family:var(--mono);outline:none;cursor:pointer;transition:border-color .15s;
+}
+.analyst-item select:focus{border-color:var(--accent);color:var(--text);}
+.run-btn{
+  width:100%;padding:14px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border:none;border-radius:10px;
+  font-family:var(--sans);font-size:15px;font-weight:700;
+  color:#000;cursor:pointer;letter-spacing:.02em;transition:opacity .2s;
+}
+.run-btn:hover{opacity:.9;}
+.run-btn:active{transform:scale(.99);}
+.results{margin-top:2.5rem;}
+.pipeline{
+  display:flex;align-items:stretch;gap:0;margin-bottom:1.5rem;
+  border:1px solid var(--border);border-radius:12px;overflow:hidden;
+}
+.pipe-seg{flex:1;padding:1rem;text-align:center;background:var(--surface);border-right:1px solid var(--border);}
+.pipe-seg:last-child{border-right:none;background:rgba(0,212,170,.05);}
+.pipe-seg-label{font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;}
+.pipe-seg-val{font-family:var(--mono);font-size:20px;font-weight:500;}
+.dim-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1.5rem;}
+@media(max-width:480px){.dim-row{grid-template-columns:1fr 1fr;}}
+.dim-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.75rem;text-align:center;}
+.dim-card-label{font-size:11px;color:var(--text3);margin-bottom:4px;font-family:var(--mono);}
+.dim-card-val{font-family:var(--mono);font-size:18px;font-weight:500;}
+.formula-box{
+  background:var(--surface2);border:1px solid var(--border);border-radius:8px;
+  padding:.9rem 1rem;font-family:var(--mono);font-size:12px;color:var(--text3);
+  margin-bottom:1.5rem;word-break:break-all;line-height:1.6;
+}
+.final-card{
+  border:1px solid var(--border);border-radius:16px;padding:2.5rem;text-align:center;
+  background:radial-gradient(ellipse at center,rgba(0,212,170,.05) 0%,transparent 70%);
+}
+.final-num{font-family:var(--mono);font-size:72px;font-weight:500;line-height:1;}
+.final-sub{font-size:13px;color:var(--text3);margin-top:6px;font-family:var(--mono);}
+.verdict-badge{
+  display:inline-block;margin-top:16px;padding:6px 20px;
+  border-radius:6px;font-size:13px;font-weight:700;letter-spacing:.03em;
+}
+.verdict-good{background:rgba(16,185,129,.15);color:var(--green);border:1px solid rgba(16,185,129,.3);}
+.verdict-mid{background:rgba(245,158,11,.12);color:var(--amber);border:1px solid rgba(245,158,11,.3);}
+.verdict-bad{background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.3);}
+.gauge-wrap{margin:1.5rem auto 0;max-width:300px;}
+.gauge-track{height:6px;background:var(--border2);border-radius:3px;overflow:hidden;}
+.gauge-fill{height:100%;border-radius:3px;transition:width .8s cubic-bezier(.4,0,.2,1);width:0%;}
+.hidden{display:none;}
+footer{
+  position:relative;z-index:1;text-align:center;
+  padding:2rem;border-top:1px solid var(--border);
+  font-family:var(--mono);font-size:11px;color:var(--text3);
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <span class="logo-dot"></span>
+    INNOVESTA
+  </div>
+  <div class="header-tag">COBWEB + K-MEANS ENGINE v1.0</div>
+</header>
+
+<main>
+
+  <div class="hero">
+    <div class="hero-kicker">Website Credibility Engine</div>
+    <h1>הערכת מהימנות<br/>אתרי אינטרנט</h1>
+    <p class="hero-sub">מערכת ניתוח המשלבת 4 קריטריונים, אלגוריתם COBWEB ו-K-Means לחישוב ציון מהימנות מדויק.</p>
+  </div>
+
+  <div class="url-row">
+    <input type="text" id="urlInput" placeholder="https://example.com (אופציונלי)"/>
+    <button class="btn-secondary" onclick="randomFill()">▸ דוגמה אקראית</button>
+  </div>
+
+  <div class="section-label">קריטריוני הערכה &nbsp;—&nbsp; +1 חיובי &nbsp;|&nbsp; 0 ניטרלי &nbsp;|&nbsp; −1 שלילי</div>
+
+  <div class="criteria-grid">
+    <div class="crit-card">
+      <div class="crit-header">
+        <div class="crit-badge badge-a">A</div>
+        <div><div class="crit-name">Authority</div><div class="crit-sub">סמכות המקור</div></div>
+      </div>
+      <div class="param-row"><span class="param-label">פרטי קשר מלאים (מייל, טלפון, כתובת)</span><div class="toggle-group" data-key="contact"><button class="tgl" data-v="1" onclick="setVal(this,1)">+1</button><button class="tgl" data-v="0" onclick="setVal(this,0)">0</button><button class="tgl" data-v="-1" onclick="setVal(this,-1)">−1</button></div></div>
+      <div class="param-row"><span class="param-label">אישורים, תעודות ורקע מקצועי של המחבר</span><div class="toggle-group" data-key="credentials"><button class="tgl" data-v="1" onclick="setVal(this,1)">+1</button><button class="tgl" data-v="0" onclick="setVal(this,0)">0</button><button class="tgl" data-v="-1" onclick="setVal(this,-1)">−1</button></div></div>
+      <div class="param-row"><span class="param-label">בדיקת תוקף ואמינות הדומיין (URL check)</span><div class="toggle-group" data-key="url_check"><button class="tgl" data-v="1" onclick="setVal(this,1)">+1</button><button class="tgl" data-v="0" onclick="setVal(this,0)">0</button><button class="tgl" data-v="-1" onclick="setVal(this,-1)">−1</button></div></div>
+    </div>
+
+    <div class="crit-card">
+      <div class="crit-header">
+        <div class="crit-badge badge-a">A</div>
+        <div><div class="crit-name">Accuracy</div><div class="crit-sub">דיוק המידע</div></div>
+      </div>
+      <div class="param-row"><span class="param-label">מפרסם מוכר ובעל שם</span><div class="toggle-group" data-key="publisher"><button class="tgl" data-v="1" onclick="setVal(this,1)">+1</button><button class="tgl" data-v="0" onclick="setVal(this,0)">0</button><button class="tgl" data-v="-1" onclick="setVal(this,-1)">−1</button></div></div>
+      <div class="param-row"><span class="param-label">עמוד "אודות" קיים ומפורט</span><div class="toggle-group" data-key="about"><button class="tgl" data-v="1" onclick="setVal(this,1)">+1</button><button class="tgl" data-v="0" onclick="setVal(this,0)">0</button><button class="tgl" data-v="-1" onclick="setVal(this,-1)">−1</button></div></div>
+      <div class="param-row"><span class="param-label">מראה פרסום מקצועי ואמין</span><div class="toggle-group" data-key="professional"><button class="tgl" data-v="1" onclick="setVal(this,1)">+1</button><button class="tgl" data-v="0" onclick="setVal(this,0)">0</button><button class="tgl" data-v="-1" onclick="setVal(this,-1)">−1</button></div></div>
+    </div>
+
+    <div class="crit-card">
+      <div class="crit-header">
+        <div class="crit-badge badge-c">C</div>
+        <div><div class="crit-name">Currency</div><div class="crit-sub">עדכניות התוכן</div></div>
+      </div>
+      <div class="param-row"><span class="param-label">תאריך המאמר עדכני</span><div class="toggle-group" data-key="date"><button class="tgl" data-v="1" onclick="setVal(this,1)">+1</button><button class="tgl" data-v="0" onclick="setVal(this,0)">0</button><button class="tgl" data-v="-1" onclick="setVal(this,-1)">−1</button></div></div>
+      <div class="param-row"><span class="param-label">קישורים תקינים ועדכניים</span><div class="toggle-group" data-key="links"><button class="tgl" data-v="1" onclick="setVal(this,1)">+1</button><button class="tgl" data-v="0" onclick="setVal(this,0)">0</button><button class="tgl" data-v="-1" onclick="setVal(this,-1)">−1</button></div></div>
+      <div class="param-row"><span class="param-label">האתר מתעדכן בתדירות גבוהה</span><div class="toggle-group" data-key="update_freq"><button class="tgl" data-v="1" onclick="setVal(this,1)">+1</button><button class="tgl" data-v="0" onclick="setVal(this,0)">0</button><button class="tgl" data-v="-1" onclick="setVal(this,-1)">−1</button></div></div>
+    </div>
+
+    <div class="crit-card">
+      <div class="crit-header">
+        <div class="crit-badge badge-p">P</div>
+        <div><div class="crit-name">Purpose</div><div class="crit-sub">מטרת האתר</div></div>
+      </div>
+      <div class="param-row"><span class="param-label">פחות מ-5 פרסומות בעמוד</span><div class="toggle-group" data-key="ads"><button class="tgl" data-v="1" onclick="setVal(this,1)">+1</button><button class="tgl" data-v="0" onclick="setVal(this,0)">0</button><button class="tgl" data-v="-1" onclick="setVal(this,-1)">−1</button></div></div>
+      <div class="param-row"><span class="param-label">קטגוריית אתר מתאימה ואמינה</span><div class="toggle-group" data-key="category"><button class="tgl" data-v="1" onclick="setVal(this,1)">+1</button><button class="tgl" data-v="0" onclick="setVal(this,0)">0</button><button class="tgl" data-v="-1" onclick="setVal(this,-1)">−1</button></div></div>
+      <div class="param-row"><span class="param-label">דירוג אתר (website rank) גבוה</span><div class="toggle-group" data-key="rank"><button class="tgl" data-v="1" onclick="setVal(this,1)">+1</button><button class="tgl" data-v="0" onclick="setVal(this,0)">0</button><button class="tgl" data-v="-1" onclick="setVal(this,-1)">−1</button></div></div>
+    </div>
+  </div>
+
+  <div class="section-label">תיקון אנליסט אנושי — Human Inside Analytics</div>
+  <div class="analyst-block">
+    <div class="analyst-top">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--accent);flex-shrink:0"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      <span style="font-size:13px;font-weight:500;">עקיפה ידנית של הניתוח האוטומטי</span>
+      <span class="analyst-chip">MANUAL COBWEB</span>
+    </div>
+    <div class="analyst-grid">
+      <div class="analyst-item"><label>AUTHORITY</label><select id="ana-a"><option value="auto">— אוטומטי —</option><option value="1">+1</option><option value="0">0</option><option value="-1">-1</option></select></div>
+      <div class="analyst-item"><label>ACCURACY</label><select id="ana-acc"><option value="auto">— אוטומטי —</option><option value="1">+1</option><option value="0">0</option><option value="-1">-1</option></select></div>
+      <div class="analyst-item"><label>CURRENCY</label><select id="ana-c"><option value="auto">— אוטומטי —</option><option value="1">+1</option><option value="0">0</option><option value="-1">-1</option></select></div>
+      <div class="analyst-item"><label>PURPOSE</label><select id="ana-p"><option value="auto">— אוטומטי —</option><option value="1">+1</option><option value="0">0</option><option value="-1">-1</option></select></div>
+    </div>
+  </div>
+
+  <button class="run-btn" onclick="runAnalysis()">הפעל COBWEB + K-Means ←</button>
+
+  <div class="results hidden" id="results">
+    <div class="section-label" style="margin-top:2.5rem;">תוצאות הניתוח</div>
+    <div class="dim-row" id="dimRow"></div>
+    <div class="pipeline">
+      <div class="pipe-seg"><div class="pipe-seg-label">COBWEB אוטומטי</div><div class="pipe-seg-val" id="cobAuto">—</div></div>
+      <div class="pipe-seg"><div class="pipe-seg-label">COBWEB ידני</div><div class="pipe-seg-val" id="cobManual">—</div></div>
+      <div class="pipe-seg"><div class="pipe-seg-label">Matching</div><div class="pipe-seg-val" id="matchedVal">—</div></div>
+      <div class="pipe-seg"><div class="pipe-seg-label" style="color:var(--accent);">K-Means → 0–5</div><div class="pipe-seg-val" id="kmeansVal" style="color:var(--accent);">—</div></div>
+    </div>
+    <div class="formula-box" id="formulaBox"></div>
+    <div class="final-card">
+      <div class="final-num" id="finalNum">—</div>
+      <div class="final-sub">/ 5.00 &nbsp;|&nbsp; ציון מהימנות סופי</div>
+      <div><span class="verdict-badge" id="verdictBadge">—</span></div>
+      <div class="gauge-wrap">
+        <div class="gauge-track"><div class="gauge-fill" id="gaugeFill"></div></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  INNOVESTA &nbsp;·&nbsp; COBWEB + K-MEANS ENGINE &nbsp;·&nbsp; מבוסס על מצגת "How to evaluate website content"
+</footer>
+
+<script>
+const state={contact:0,credentials:0,url_check:0,publisher:0,about:0,professional:0,date:0,links:0,update_freq:0,ads:0,category:0,rank:0};
+
+function setVal(btn,v){
+  const grp=btn.closest('.toggle-group');
+  state[grp.dataset.key]=v;
+  grp.querySelectorAll('.tgl').forEach(b=>b.classList.remove('pos','zero','neg'));
+  btn.classList.add(v===1?'pos':v===0?'zero':'neg');
+}
+
+function avg(keys){return keys.reduce((s,k)=>s+state[k],0)/keys.length;}
+function analystVal(id,auto){const v=document.getElementById(id).value;return v==='auto'?auto:parseFloat(v);}
+function kMeans(raw){return((raw+1)/2)*5;}
+function colorFor(v){return v>0.15?'var(--green)':v<-0.15?'var(--red)':'var(--text2)';}
+
+function runAnalysis(){
+  const autoA=avg(['contact','credentials','url_check']);
+  const autoAcc=avg(['publisher','about','professional']);
+  const autoC=avg(['date','links','update_freq']);
+  const autoP=avg(['ads','category','rank']);
+  const manA=analystVal('ana-a',autoA);
+  const manAcc=analystVal('ana-acc',autoAcc);
+  const manC=analystVal('ana-c',autoC);
+  const manP=analystVal('ana-p',autoP);
+  const cobAuto=(autoA+autoAcc+autoC+autoP)/4;
+  const cobManual=(manA+manAcc+manC+manP)/4;
+  const matched=(cobAuto+cobManual)/2;
+  const final5=kMeans(matched);
+
+  const dims=[
+    {label:'Authority',val:(autoA+manA)/2},
+    {label:'Accuracy',val:(autoAcc+manAcc)/2},
+    {label:'Currency',val:(autoC+manC)/2},
+    {label:'Purpose',val:(autoP+manP)/2},
+  ];
+  document.getElementById('dimRow').innerHTML=dims.map(d=>`
+    <div class="dim-card">
+      <div class="dim-card-label">${d.label}</div>
+      <div class="dim-card-val" style="color:${colorFor(d.val)}">${d.val.toFixed(2)}</div>
+    </div>`).join('');
+
+  document.getElementById('cobAuto').textContent=cobAuto.toFixed(3);
+  document.getElementById('cobManual').textContent=cobManual.toFixed(3);
+  document.getElementById('matchedVal').textContent=matched.toFixed(3);
+  document.getElementById('kmeansVal').textContent=final5.toFixed(2);
+
+  const vals=dims.map(d=>d.val.toFixed(2));
+  document.getElementById('formulaBox').textContent=
+    'F(∑) = ('+vals.join(') + (')+') = '+matched.toFixed(3)
+    +'  →  K-Means: (('+matched.toFixed(3)+' + 1) / 2) × 5 = '+final5.toFixed(2);
+
+  const numEl=document.getElementById('finalNum');
+  const badge=document.getElementById('verdictBadge');
+  const gauge=document.getElementById('gaugeFill');
+  numEl.textContent=final5.toFixed(2);
+  badge.className='verdict-badge';
+  gauge.style.width=(final5/5*100).toFixed(1)+'%';
+
+  if(final5>=3.5){
+    numEl.style.color='var(--green)';
+    badge.classList.add('verdict-good');badge.textContent='✓  מקור אמין — מומלץ לשימוש';
+    gauge.style.background='var(--green)';
+  } else if(final5>=2){
+    numEl.style.color='var(--amber)';
+    badge.classList.add('verdict-mid');badge.textContent='⚠  מקור בינוני — השתמש בזהירות';
+    gauge.style.background='var(--amber)';
+  } else {
+    numEl.style.color='var(--red)';
+    badge.classList.add('verdict-bad');badge.textContent='✕  מקור לא מהימן — לא מומלץ';
+    gauge.style.background='var(--red)';
+  }
+
+  document.getElementById('results').classList.remove('hidden');
+  setTimeout(()=>document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'}),100);
+}
+
+function randomFill(){
+  const vals=[1,0,-1];
+  document.querySelectorAll('.toggle-group').forEach(grp=>{
+    const v=vals[Math.floor(Math.random()*3)];
+    const btn=grp.querySelector('[data-v="'+v+'"]');
+    if(btn)setVal(btn,v);
+  });
+  const examples=['https://nature.com','https://bbc.co.uk/news','https://wikipedia.org','https://randomsite123.xyz','https://who.int'];
+  document.getElementById('urlInput').value=examples[Math.floor(Math.random()*examples.length)];
+}
+</script>
+</body>
+</html>
